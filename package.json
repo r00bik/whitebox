@@ -10,8 +10,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "pnpm -r run lint",
-    "format": "prettier --check \"**/*.{js,ts,tsx,json,md}\"",
-    "format:write": "prettier --write \"**/*.{js,ts,tsx,json,md}\"",
+    "format": "pnpm -r run format",
     "prepare": "husky install",
     "dev": "concurrently \"pnpm run dev:up\" \"pnpm run dev:backend\" \"pnpm run dev:web\" --names \"🐳,🔧,🌐\" --prefix-colors \"cyan,yellow,blue\"",
     "dev:backend": "pnpm --filter @whitebox/back run start:dev",
@@ -39,21 +38,16 @@
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
     "concurrently": "^9.2.0",
-    "eslint": "^9.30.1",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.5.1",
-    "eslint-plugin-simple-import-sort": "^12.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
-    "prettier": "^3.6.1",
-    "prettier-plugin-tailwindcss": "^0.6.13"
+    "prettier": "^3.6.1"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
-      "eslint --fix"
+      "pnpm run lint"
     ],
     "*.{js,ts,tsx,json,md}": [
-      "prettier --write"
+      "pnpm run format"
     ]
   }
 }
