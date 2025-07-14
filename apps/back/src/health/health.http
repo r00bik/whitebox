@@ -1,0 +1,22 @@
+###
+# Health Controller API Tests
+# Используйте REST Client в VS Code
+###
+
+# Переменные
+@baseUrl = http://localhost:3000/v1
+
+### Проверка здоровья системы (публичный эндпоинт)
+GET {{baseUrl}}/health
+
+### Проверка с заголовками
+GET {{baseUrl}}/health
+Accept: application/json
+User-Agent: REST-Client
+
+###
+# Этот эндпоинт должен:
+# - Возвращать 200 OK
+# - Не требовать авторизации
+# - Возвращать { "status": "ok" }
+### 

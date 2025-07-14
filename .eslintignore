@@ -1,0 +1,15 @@
+node_modules/
+# Папки сборки
+/dist/
+**/dist/
+# Сгенерированный код
+/generated/
+**/generated/
+.tanstack/
+# Prisma миграции
+/prisma/migrations/
+**/prisma/migrations/
+# Автогенерированные ts-файлы
+*.gen.ts
+**/*.gen.ts
+routeTree.gen.ts 

@@ -1,0 +1,271 @@
+###
+# Contacts Controller API Tests
+# Используйте REST Client в VS Code
+# Требуется JWT токен - получите его из /auth/login
+###
+
+# Переменные
+@baseUrl = http://localhost:3000/v1
+@contentType = application/json
+@authToken = YOUR_JWT_TOKEN
+
+###
+# ПРЕДВАРИТЕЛЬНЫЕ ШАГИ
+# 1. Войдите в систему через /auth/login
+# 2. Скопируйте access_token из ответа
+# 3. Замените YOUR_JWT_TOKEN выше на ваш токен
+###
+
+### Вход в систему (получение токена)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+###
+# ОСНОВНЫЕ CRUD ОПЕРАЦИИ
+###
+
+### 1. Создание нового контакта
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "cm7n8o9p0q1r2s3t4",
+  "notes": "Коллега из отдела маркетинга",
+  "tags": ["работа", "коллега", "маркетинг"]
+}
+
+### 2. Получение списка контактов (первая страница)
+GET {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+
+### 3. Получение списка контактов с пагинацией
+GET {{baseUrl}}/contacts?page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### 4. Получение контакта по ID
+# Замените contact-id на реальный ID из предыдущих ответов
+GET {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+
+### 5. Обновление контакта
+# Замените contact-id на реальный ID
+PUT {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "notes": "Обновленные заметки о коллеге",
+  "tags": ["работа", "друг", "важный"]
+}
+
+### 6. Деактивация контакта (soft delete)
+# Замените contact-id на реальный ID
+DELETE {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+
+### 7. Восстановление контакта
+# Замените contact-id на реальный ID деактивированного контакта
+PATCH {{baseUrl}}/contacts/contact-id/activate
+Authorization: Bearer {{authToken}}
+
+###
+# ПОИСК И ФИЛЬТРАЦИЯ
+###
+
+### 8. Поиск контактов по имени
+GET {{baseUrl}}/contacts/search?search=Иван
+Authorization: Bearer {{authToken}}
+
+### 9. Поиск с пагинацией
+GET {{baseUrl}}/contacts/search?search=test&page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### 10. Фильтрация по тегам
+GET {{baseUrl}}/contacts/search?tags=работа&tags=друг
+Authorization: Bearer {{authToken}}
+
+### 11. Фильтрация по статусу активности
+GET {{baseUrl}}/contacts/search?isActive=true
+Authorization: Bearer {{authToken}}
+
+### 12. Комбинированный поиск
+GET {{baseUrl}}/contacts/search?search=test&tags=работа&isActive=true&page=1&limit=5
+Authorization: Bearer {{authToken}}
+
+### 13. Получение архивированных контактов
+GET {{baseUrl}}/contacts/archived
+Authorization: Bearer {{authToken}}
+
+### 14. Архивированные с пагинацией
+GET {{baseUrl}}/contacts/archived?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+###
+# СОРТИРОВКА
+###
+
+### 15. Сортировка по дате создания (по убыванию)
+GET {{baseUrl}}/contacts?sortBy=createdAt&sortOrder=desc
+Authorization: Bearer {{authToken}}
+
+### 16. Сортировка по имени (по возрастанию)
+GET {{baseUrl}}/contacts?sortBy=name&sortOrder=asc
+Authorization: Bearer {{authToken}}
+
+### 17. Сортировка по дате обновления
+GET {{baseUrl}}/contacts?sortBy=updatedAt&sortOrder=desc
+Authorization: Bearer {{authToken}}
+
+###
+# ТЕСТЫ ОШИБОК
+###
+
+### Ошибка 401 - Нет токена авторизации
+GET {{baseUrl}}/contacts
+
+### Ошибка 401 - Неверный токен
+GET {{baseUrl}}/contacts
+Authorization: Bearer invalid-token
+
+### Ошибка 400 - Некорректный UUID
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "invalid-uuid",
+  "notes": "Test note"
+}
+
+### Ошибка 400 - Добавление самого себя
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "ваш-собственный-user-id",
+  "notes": "Попытка добавить себя"
+}
+
+### Ошибка 404 - Несуществующий пользователь
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "cm999nonexistent999",
+  "notes": "Несуществующий пользователь"
+}
+
+### Ошибка 404 - Несуществующий контакт
+GET {{baseUrl}}/contacts/cm999nonexistent999
+Authorization: Bearer {{authToken}}
+
+### Ошибка 400 - Дублированный контакт
+# Попробуйте создать контакт с тем же contactUserId дважды
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "cm7n8o9p0q1r2s3t4",
+  "notes": "Попытка дублирования"
+}
+
+###
+# ВАЛИДАЦИЯ ДАННЫХ
+###
+
+### Ошибка валидации - Пустое тело запроса
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{}
+
+### Ошибка валидации - Неверный тип данных для тегов
+POST {{baseUrl}}/contacts
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "contactUserId": "cm7n8o9p0q1r2s3t4",
+  "tags": "неверный-тип-данных"
+}
+
+### Ошибка валидации - Превышение лимита пагинации
+GET {{baseUrl}}/contacts?limit=1000
+Authorization: Bearer {{authToken}}
+
+### Ошибка валидации - Неверный номер страницы
+GET {{baseUrl}}/contacts?page=0
+Authorization: Bearer {{authToken}}
+
+###
+# ГРАНИЧНЫЕ СЛУЧАИ
+###
+
+### Максимальный лимит пагинации
+GET {{baseUrl}}/contacts?limit=100
+Authorization: Bearer {{authToken}}
+
+### Поиск с пустой строкой
+GET {{baseUrl}}/contacts/search?search=
+Authorization: Bearer {{authToken}}
+
+### Фильтрация по несуществующим тегам
+GET {{baseUrl}}/contacts/search?tags=несуществующий-тег
+Authorization: Bearer {{authToken}}
+
+### Обновление только заметок
+PUT {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "notes": "Только обновленные заметки"
+}
+
+### Обновление только тегов
+PUT {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "tags": ["новый-тег", "обновленный"]
+}
+
+### Очистка заметок
+PUT {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "notes": null
+}
+
+### Очистка тегов
+PUT {{baseUrl}}/contacts/contact-id
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "tags": []
+}
+
+###
+# ПОЛЕЗНЫЕ КОММЕНТАРИИ:
+#
+# 1. Замените YOUR_JWT_TOKEN на токен из /auth/login
+# 2. Замените contact-id на реальные ID из ответов
+# 3. Все эндпоинты требуют JWT авторизацию
+# 4. Для тестирования создайте несколько пользователей в seed
+# 5. Проверьте Swagger документацию: http://localhost:3000/api
+# 6. Тестовые пользователи: alice@example.com, bob@example.com (пароль: password123)
+### 

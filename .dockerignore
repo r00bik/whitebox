@@ -1,0 +1,42 @@
+# Node modules
+node_modules
+*/node_modules
+**/node_modules
+
+# Package manager files
+npm-debug.log
+.pnpm-debug.log*
+.yarn
+.pnpm-store
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Development files
+.git
+.gitignore
+README.md
+*.md
+.eslintrc.js
+.prettierrc
+.nvmrc
+
+# IDE files
+.vscode
+.idea
+.DS_Store
+
+# Logs
+*.log
+coverage
+
+# Build directories
+dist
+build
+
+# GitHub
+.github 

@@ -1,0 +1,118 @@
+###
+# Auth Controller API Tests
+# Используйте REST Client в VS Code
+###
+
+# Переменные
+@baseUrl = http://localhost:3000/v1
+@contentType = application/json
+
+### Регистрация нового пользователя
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "Test User"
+}
+
+### Регистрация без имени (опционально)
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user2@example.com", 
+  "password": "password123"
+}
+
+### Вход в систему
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### Вход для существующего пользователя (пароль: password123)
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+
+### Получение данных текущего пользователя
+# Замените YOUR_JWT_TOKEN на токен из ответа /auth/login
+GET {{baseUrl}}/auth/me
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+# Тесты ошибок валидации
+###
+
+### Ошибка валидации - неверный email
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "invalid-email",
+  "password": "password123",
+  "name": "Test User"
+}
+
+### Ошибка валидации - короткий пароль
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "test@example.com",
+  "password": "123",
+  "name": "Test User"
+}
+
+### Ошибка - дублированный email
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "password123",
+  "name": "Duplicate User"
+}
+
+### Ошибка входа - неверный пароль
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "wrongpassword"
+}
+
+### Ошибка входа - несуществующий пользователь
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "nonexistent@example.com",
+  "password": "password123"
+}
+
+### Ошибка - доступ без токена
+GET {{baseUrl}}/auth/me
+
+### Ошибка - неверный токен
+GET {{baseUrl}}/auth/me
+Authorization: Bearer invalid-jwt-token
+
+###
+# Полезные комментарии:
+#
+# 1. Замените YOUR_JWT_TOKEN на токен из ответа /auth/login
+# 2. Токены действительны 1 день (по умолчанию)
+# 3. Для тестирования используйте существующих пользователей с паролем: password123
+# 4. Все эндпоинты требуют JWT токен кроме register/login
+### 
