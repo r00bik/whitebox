@@ -18,7 +18,13 @@
     /* type checking */
     "strict": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+
+    /* paths */
+    "paths": {
+      "@shared/*": ["./src/shared/*"],
+      "@assets/*": ["./src/assets/*"]
+    }
   },
   "include": ["src"]
 }
