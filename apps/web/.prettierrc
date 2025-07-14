@@ -1,6 +1,7 @@
 {
   "plugins": ["prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./src/assets/styles/tailwind.css",
+  "tailwindFunctions": ["clsx"],
   "semi": true,
   "singleQuote": false,
   "printWidth": 100,

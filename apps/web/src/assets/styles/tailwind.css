@@ -1,1 +1,10 @@
 @import "tailwindcss";
+@import "tailwindcss-primeui";
+
+@theme {
+  --font-exo-2: var(--font-exo-2);
+}
+
+:root {
+  @apply font-exo-2;
+}
